@@ -1,0 +1,166 @@
+.message-container {
+  display: flex;
+  border-radius: 10px;
+}
+
+.active-users-container {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  height: 95vh;
+  width: 35%;
+}
+
+.search {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100px;
+  background-color: white;
+  border-radius: 10px;
+}
+.search p {
+  font-weight: bold;
+}
+.search input {
+  padding: 10px;
+  outline: none;
+  width: 60%;
+  border: 1px solid #bbbbbb;
+  border-radius: 20px;
+}
+
+.users-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  height: 100%;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.active-users-list {
+  padding: 10px;
+  display: flex;
+
+  /* 
+  overflow-y: scroll;
+  flex-direction: column;
+
+  list-style-type: none;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.8) rgba(0, 0, 0, 0);
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+  } */
+}
+
+.user {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.active-user {
+  display: flex;
+  align-items: center;
+  padding: 30px 20px;
+
+  cursor: pointer;
+}
+
+.user-image {
+  width: 50px;
+  height: 50px;
+}
+
+.active-user img {
+  object-fit: contain;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.user-text {
+  height: 50px;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.active-user-name {
+  font-weight: bold;
+}
+
+.time {
+  padding: 30px 20px;
+}
+
+.active-user:hover {
+  background-color: #e0e0e0;
+}
+
+.user:hover {
+  background-color: #e0e0e0;
+}
+
+.active {
+  background-color: #e0e0e0;
+}
+
+.no-users-message {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@media only screen and (max-width: 768px) {
+  .message-container {
+    justify-content: flex-start;
+  }
+
+  .messageBox {
+    width: 100%;
+  }
+  .active-users-list {
+    width: 150px;
+  }
+  .active-users-container {
+    min-width: 150px;
+  }
+
+  .messages {
+    max-width: 220px;
+    word-wrap: break-word;
+  }
+
+  .message {
+    width: 20px;
+  }
+
+  .message p {
+    font-size: 13px;
+  }
+
+  .message span {
+    font-size: 8px;
+    color: black;
+  }
+}

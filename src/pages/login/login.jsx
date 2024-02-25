@@ -1,0 +1,132 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser, setUser } from "../../redux/slices/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import userMale from "../../images/userMale.png";
+import "./login.css";
+
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import googleImage from "../../images/google.png";
+import { addNewUserToFirestore } from "../../services/userServices";
+// import {
+//   addNewUserToFirestore,
+//   signOutAndUpdateStatus,
+// } from "../services/userServices";
+
+const Login = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+
+  const { name } = useSelector((state) => state.user);
+
+  const handleGoogleSignIn = async () => {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    try {
+      signInWithPopup(auth, provider)
+        .then(async ({ user }) => {
+          const userData = {
+            name: user.displayName,
+            email: user.email,
+            googleId: user.uid,
+          };
+
+            addNewUserToFirestore(userData, dispatch, true, true, true);
+
+          //   await signOutAndUpdateStatus(user.uid, true);
+
+          const storage = getStorage();
+          const storageRef = ref(
+            storage,
+            `user_photos/${user.uid}/user-photo.jpg`
+          );
+
+          getDownloadURL(storageRef)
+            .then((downloadURL) => {
+              const photo = downloadURL || userMale;
+              console.log(downloadURL);
+
+              dispatch(
+                setUser({
+                  email: user.email,
+                  id: user.uid,
+                  token: user.accessToken,
+                  name: user.displayName,
+                  photo: photo,
+                })
+              );
+
+              setError(null);
+              window.localStorage.setItem("userId", 1);
+              dispatch(
+                loginUser({ username: "username", password: "password" })
+              );
+            })
+            .catch((error) => {
+              if (error.code === "storage/object-not-found") {
+                const photo = userMale;
+                dispatch(
+                  setUser({
+                    email: user.email,
+                    id: user.uid,
+                    token: user.accessToken,
+                    name: user.displayName,
+                    photo: photo,
+                  })
+                );
+                setError(null);
+                console.log("setted");
+                window.localStorage.setItem("userId", 1);
+                dispatch(
+                  loginUser({ username: "username", password: "password" })
+                );
+              } else {
+                console.error(
+                  "Error fetching user's photo from Firebase storage:",
+                  error
+                );
+              }
+            });
+        })
+        .catch((error) => {
+          console.error("Google Sign-In error:", error);
+        });
+    } catch (error) {
+      console.error("Google Sign-In error:", error);
+    }
+  };
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+  };
+
+
+  return (
+    <div className="login-register">
+
+
+      <div className={"login-container"}>
+        <h2>Login</h2>
+        <form className="login-form" action="#" onSubmit={submitHandler}>
+          {error && <p className="error-message">{error}</p>}
+          <div className="form-group googleLogin">
+         
+            <button onClick={handleGoogleSignIn}>
+              <img src={googleImage} alt="Google" />
+            </button>
+          </div>
+         
+          <div className="form-group"></div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

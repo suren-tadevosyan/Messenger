@@ -1,0 +1,43 @@
+.header {
+  width: 100px;
+  height: 95vh;
+  background-color: #010019;
+  color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+.header-content {
+  height: calc(100% - 40px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logo {
+  width: 60px;
+  height: 50px;
+}
+
+.logo img {
+  object-fit: contain;
+  width: 60px;
+  height: 50px;
+}
+
+.icon {
+  cursor: pointer;
+}
+
+.icons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.selected {
+  color: #ff4a09;
+}
