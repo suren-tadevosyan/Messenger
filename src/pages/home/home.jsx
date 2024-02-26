@@ -5,6 +5,8 @@ import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import userPhoto from "../../images/userMale.png";
 import "./home.css";
 import { NotFound } from "../../utils/animations";
+import Chat from "./chat";
+import { fetchLastMessage } from "../../services/messageServices";
 
 const Home = () => {
   const [activeUsers, setActiveUsers] = useState([]);
@@ -13,13 +15,17 @@ const Home = () => {
   const { id } = useSelector((state) => state.user);
   const [userImages, setUserImages] = useState({});
   const [searchText, setSearchText] = useState("");
+  const [lastMessages, setLastMessages] = useState({});
 
   useEffect(() => {
     const fetchActiveUsers = async () => {
       try {
         const users = await getAllUsers();
         setActiveUsers(users.filter((user) => user.userId !== id));
-        console.log(users);
+        users.forEach((user) => {
+          fetchLastMessage(id, user.userId, setLastMessages);
+        });
+        console.log(lastMessages);
       } catch (error) {
         console.error("Error fetching active users:", error);
       }
@@ -28,6 +34,7 @@ const Home = () => {
     fetchActiveUsers();
   }, [id]);
 
+  useEffect(() => {});
   const fetchUserImage = useCallback(
     async (userId) => {
       try {
@@ -50,6 +57,7 @@ const Home = () => {
 
   const handleUserClick = (user) => {
     setSelectedUser(user);
+    console.log(selectedUser);
     setSelectedUserId(user.userId === selectedUserId ? null : user.userId);
   };
 
@@ -102,7 +110,11 @@ const Home = () => {
 
                   <div className="user-text">
                     <div className="active-user-name">{user.name}</div>
-                    <div className="active-user-message">typing...</div>
+                    <div className="active-user-message">
+                      {" "}
+                      {lastMessages[user.userId] &&
+                        lastMessages[user.userId].content}
+                    </div>
                   </div>
                 </li>
                 <div className="time">asd</div>
@@ -110,6 +122,9 @@ const Home = () => {
             ))
           )}
         </div>
+      </div>
+      <div className="chat-container-all">
+        <Chat selectedUser={selectedUser} />
       </div>
     </div>
   );

@@ -8,10 +8,9 @@ import AuthorPage from "../pages/authorPage/authorPage";
 
 const AppRoutes = () => {
   const { isLoggedIn } = useSelector((state) => state.user);
-  console.log(isLoggedIn);
+
   return (
     <>
-      
       <Routes>
         <Route
           path="/login"

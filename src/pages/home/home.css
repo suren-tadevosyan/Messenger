@@ -9,13 +9,21 @@
   align-content: center;
   height: 95vh;
   width: 35%;
+  
+}
+
+.chat-container-all {
+  
+  height: 95vh;
+  width: 65%;
+  margin-left: 10px;
 }
 
 .search {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 100px;
+  height: 90px;
   background-color: white;
   border-radius: 10px;
 }
@@ -104,6 +112,11 @@
   font-weight: bold;
 }
 
+.active-user-message {
+  color: gray;
+  font-size: 15px;
+}
+
 .time {
   padding: 30px 20px;
 }
@@ -144,11 +157,6 @@
   }
   .active-users-container {
     min-width: 150px;
-  }
-
-  .messages {
-    max-width: 220px;
-    word-wrap: break-word;
   }
 
   .message {
