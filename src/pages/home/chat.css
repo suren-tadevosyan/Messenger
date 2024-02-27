@@ -15,6 +15,10 @@
   border-radius: 10px;
 }
 
+.selected-user div {
+  display: flex;
+}
+
 .selected-user-image {
   height: 80%;
   width: 60px;

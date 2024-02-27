@@ -9,6 +9,8 @@ import {
   limit,
   getDoc,
   getDocs,
+  updateDoc,
+  doc,
 } from "firebase/firestore";
 
 const sendMessage = async (receiverId, senderId, newMessage) => {
@@ -67,7 +69,7 @@ const fetchMessages = (selectedUserId, currentUserId, setMessages) => {
       ...doc.data(),
       id: doc.id,
     }));
-    console.log(fetchedMessages);
+
     setMessages((prevMessages) => [...prevMessages, ...fetchedMessages]);
   });
 
@@ -80,29 +82,79 @@ const fetchMessages = (selectedUserId, currentUserId, setMessages) => {
 const fetchLastMessage = async (
   currentUserId,
   otherUserId,
-  setLastMessages
+  setLastMessages,
+  mark
 ) => {
-  try {
-    const messagesRef = collection(firestore, "messages");
-    const q = query(
-      messagesRef,
-      where("sender", "==", otherUserId),
-      where("receiver", "==", currentUserId),
-      orderBy("timestamp", "desc"),
-      limit(1)
-    );
+  const messagesRef = collection(firestore, "messages");
+  const q = query(
+    messagesRef,
+    where("sender", "==", otherUserId),
+    where("receiver", "==", currentUserId),
+    orderBy("timestamp", "desc"),
+    limit(1)
+  );
 
-    const querySnapshot = await getDocs(q);
+  
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
     querySnapshot.forEach((doc) => {
       const lastMessage = doc.data();
-      console.log(lastMessage);
+
+
       setLastMessages((prevLastMessages) => ({
         ...prevLastMessages,
         [otherUserId]: lastMessage,
       }));
+
+      
+      if (mark) {
+        markLastMessageAsSeen(doc.id);
+      }
+   
     });
+  });
+
+ 
+  return unsubscribe;
+
+  // try {
+  //   const messagesRef = collection(firestore, "messages");
+  //   const q = query(
+  //     messagesRef,
+  //     where("sender", "==", otherUserId),
+  //     where("receiver", "==", currentUserId),
+  //     orderBy("timestamp", "desc"),
+  //     limit(1)
+  //   );
+
+  //   const querySnapshot = await getDocs(q);
+  //   querySnapshot.forEach((doc) => {
+  //     const lastMessage = doc.data();
+  //     console.log(lastMessage);
+
+  //     setLastMessages((prevLastMessages) => ({
+  //       ...prevLastMessages,
+  //       [otherUserId]: lastMessage,
+  //     }));
+
+  //     if (mark) {
+  //       console.log(4565);
+  //       markLastMessageAsSeen(doc.id);
+  //     }
+  //   });
+  // } catch (error) {
+  //   console.error("Error fetching last message:", error);
+  // }
+};
+
+const markLastMessageAsSeen = async (lastMessageId) => {
+  try {
+    const messageRef = doc(firestore, "messages", lastMessageId);
+    await updateDoc(messageRef, {
+      seen: true,
+    });
+    // console.log("Last message marked as seen successfully.");
   } catch (error) {
-    console.error("Error fetching last message:", error);
+    console.error("Error marking last message as seen:", error);
   }
 };
 

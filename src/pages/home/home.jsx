@@ -6,7 +6,9 @@ import userPhoto from "../../images/userMale.png";
 import "./home.css";
 import { NotFound } from "../../utils/animations";
 import Chat from "./chat";
-import { fetchLastMessage } from "../../services/messageServices";
+import {
+  fetchLastMessage,
+} from "../../services/messageServices";
 
 const Home = () => {
   const [activeUsers, setActiveUsers] = useState([]);
@@ -25,7 +27,6 @@ const Home = () => {
         users.forEach((user) => {
           fetchLastMessage(id, user.userId, setLastMessages);
         });
-        console.log(lastMessages);
       } catch (error) {
         console.error("Error fetching active users:", error);
       }
@@ -57,8 +58,9 @@ const Home = () => {
 
   const handleUserClick = (user) => {
     setSelectedUser(user);
-    console.log(selectedUser);
     setSelectedUserId(user.userId === selectedUserId ? null : user.userId);
+
+    fetchLastMessage(id, user.userId, setLastMessages, true);
   };
 
   const filteredUsers = activeUsers.filter((user) =>
@@ -88,7 +90,13 @@ const Home = () => {
               <div
                 className={`user ${
                   selectedUserId === user.userId ? "active" : ""
-                }`}
+                } ${
+                  lastMessages[user.userId]
+                    ? lastMessages[user.userId].seen
+                      ? "seen"
+                      : "unseen"
+                    : ""
+                } `}
                 onClick={() => handleUserClick(user)}
                 key={user.userId}
               >
@@ -117,7 +125,13 @@ const Home = () => {
                     </div>
                   </div>
                 </li>
-                <div className="time">asd</div>
+                <div className="time">
+                  {" "}
+                  Seen:{" "}
+                  {lastMessages[user.userId] && lastMessages[user.userId].seen
+                    ? "true"
+                    : ""}
+                </div>
               </div>
             ))
           )}

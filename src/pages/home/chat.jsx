@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import "./chat.css";
 import { useSelector } from "react-redux";
 import { sendMessage, fetchMessages } from "../../services/messageServices";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import userPhotoDef from "../../images/userMale.png";
 
 const Chat = ({ selectedUser }) => {
@@ -13,6 +13,11 @@ const Chat = ({ selectedUser }) => {
   const [sortedMessages, setSortedMessages] = useState([]);
   const { id } = useSelector((state) => state.user);
   const [userPhoto, setUserPhoto] = useState(null);
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [sortedMessages]);
 
   const handleMessageSend = () => {
     if (newMessage && selectedUser) {
@@ -93,13 +98,17 @@ const Chat = ({ selectedUser }) => {
   return (
     <div className="chat-container">
       <div className="selected-user">
-        <div className="selected-user-image">
-          <img src={userPhoto} alt="" />
-        </div>
-        <div className="selected-user-name">
-          <p>{selectedUser && selectedUser.name}</p>
-          <span>Online</span>
-        </div>
+        {selectedUser && (
+          <div className="">
+            <div className="selected-user-image">
+              <img src={userPhoto} alt="" />
+            </div>
+            <div className="selected-user-name">
+              <p>{selectedUser && selectedUser.name}</p>
+              <span>Online</span>
+            </div>
+          </div>
+        )}
       </div>
       <div className="messages">
         {sortedMessages.map((message, index) => (
@@ -118,6 +127,7 @@ const Chat = ({ selectedUser }) => {
             <span>{formatTime(message.timestamp)}</span>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
       <div className="messages-input">
         <input
