@@ -7,8 +7,7 @@ import {
   orderBy,
   onSnapshot,
   limit,
-  getDoc,
-  getDocs,
+
   updateDoc,
   doc,
 } from "firebase/firestore";
