@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { ProtectedRoute } from "./protected";
 import Login from "../pages/login/login";
 import Home from "../pages/home/home";
-import Header from "../pages/header/header";
+
 import AuthorPage from "../pages/authorPage/authorPage";
 
 const AppRoutes = () => {

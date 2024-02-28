@@ -41,3 +41,18 @@
 .selected {
   color: #ff4a09;
 }
+
+.header-user-photo {
+  width: 60px;
+  height: 60px;
+
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.header-user-photo img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+}

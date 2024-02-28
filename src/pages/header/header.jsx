@@ -5,12 +5,17 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginUser, removeUser } from "../../redux/slices/auth";
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import userPhoto1 from "../../images/userMale.png";
 
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [selectedIcon, setSelectedIcon] = useState(null);
-  const { name } = useSelector((state) => state.user);
+  const { id, photo } = useSelector((state) => state.user);
+  const [userPhoto, setUserPhoto] = useState(
+    photo.photo ? photo.photo : userPhoto1
+  );
 
   async function onLogout() {
     dispatch(removeUser());
@@ -38,6 +43,25 @@ const Header = () => {
         break;
     }
   };
+
+  useEffect(() => {
+    const fetchAuthorImage = async () => {
+      try {
+        const storage = getStorage();
+        const storageRef = ref(storage, `user_photos/${id}/user-photo.jpg`);
+        const downloadURL = await getDownloadURL(storageRef);
+        setUserPhoto(downloadURL);
+      } catch (error) {
+        console.error(
+          "Error fetching author's image from Firebase storage:",
+          error
+        );
+        setUserPhoto(userPhoto);
+      }
+    };
+
+    fetchAuthorImage();
+  }, [userPhoto, id]);
 
   return (
     <div className="header">
@@ -68,7 +92,9 @@ const Header = () => {
           />
         </div>
 
-        <div>123</div>
+        <div className="header-user-photo">
+          <img src={userPhoto} alt="User" />
+        </div>
       </div>
     </div>
   );

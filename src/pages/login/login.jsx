@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+
+import { useDispatch,  } from "react-redux";
 import { loginUser, setUser } from "../../redux/slices/auth";
 import {
   getAuth,
@@ -20,10 +20,10 @@ import { addNewUserToFirestore } from "../../services/userServices";
 
 const Login = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  
   const [error, setError] = useState(null);
 
-  const { name } = useSelector((state) => state.user);
+  
 
   const handleGoogleSignIn = async () => {
     const auth = getAuth();
@@ -112,7 +112,7 @@ const Login = () => {
 
 
       <div className={"login-container"}>
-        <h2>Login</h2>
+        <h2>Login with Google</h2>
         <form className="login-form" action="#" onSubmit={submitHandler}>
           {error && <p className="error-message">{error}</p>}
           <div className="form-group googleLogin">
