@@ -3,8 +3,12 @@ import SendIcon from "@mui/icons-material/Send";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import "./chat.css";
 import { useSelector } from "react-redux";
-import { sendMessage, fetchMessages } from "../../services/messageServices";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import {
+  sendMessage,
+  fetchMessages,
+  deleteMessage,
+} from "../../services/messageServices";
+import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import userPhotoDef from "../../images/userMale.png";
 
 const Chat = ({ selectedUser }) => {
@@ -14,19 +18,28 @@ const Chat = ({ selectedUser }) => {
   const { id } = useSelector((state) => state.user);
   const [userPhoto, setUserPhoto] = useState(null);
   const messagesEndRef = useRef(null);
+  const [imageUrl, setImageUrl] = useState(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [sortedMessages]);
 
   const handleMessageSend = () => {
-    if (newMessage && selectedUser) {
-      sendMessage(selectedUser.userId, id, newMessage);
+    if ((newMessage.trim() !== "" || imageUrl) && selectedUser) {
+      sendMessage(selectedUser.userId, id, newMessage, imageUrl);
       setNewMessage("");
+      setImageUrl(null);
       const unsubscribe = fetchMessages(selectedUser?.userId, id, setMessages);
 
       return () => unsubscribe();
     }
+  };
+
+  const handleDelete = (messageID) => {
+    deleteMessage(messageID);
+    const unsubscribe = fetchMessages(selectedUser?.userId, id, setMessages);
+
+    return () => unsubscribe();
   };
 
   useEffect(() => {
@@ -36,15 +49,13 @@ const Chat = ({ selectedUser }) => {
   }, [selectedUser, id]);
 
   useEffect(() => {
-    const sorted = messages.sort((a, b) => {
+    const sorted = [...messages].sort((a, b) => {
       const dateA = new Date(a.timestamp);
       const dateB = new Date(b.timestamp);
-
       return dateA - dateB;
     });
 
     const seenTimestamps = new Set();
-
     const filteredData = sorted.filter((item) => {
       const timestamp = item.timestamp;
       if (seenTimestamps.has(timestamp)) {
@@ -116,15 +127,27 @@ const Chat = ({ selectedUser }) => {
             key={index}
             className={`${message.sender === id ? "sent-m" : "received-m"}`}
           >
-            {" "}
-            <div
-              className={`message ${
-                message.sender === id ? "sent" : "received"
-              }`}
-            >
-              <p> {message.content} </p>
-            </div>
+            {message.imageUrl ? (
+              <div className="message-img">
+                <img
+                  src={message.imageUrl}
+                  className="message-img"
+                  alt="Image"
+                />{" "}
+              </div>
+            ) : (
+              <div
+                className={`message ${
+                  message.sender === id ? "sent" : "received"
+                }`}
+              >
+                <p>{message.content}</p>
+              </div>
+            )}
             <span>{formatTime(message.timestamp)}</span>
+            {message.sender === id && (
+              <button onClick={() => handleDelete(message.id)}>Delete</button>
+            )}
           </div>
         ))}
         <div ref={messagesEndRef} />
@@ -142,7 +165,29 @@ const Chat = ({ selectedUser }) => {
           }}
           onChange={(e) => setNewMessage(e.target.value)}
         />
-        <button type="button">
+        <input
+          type="file"
+          accept="image/*"
+          className="file-input"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const storage = getStorage();
+              const storageRef = ref(storage, `images/${file.name}`);
+              uploadBytes(storageRef, file).then((snapshot) => {
+                getDownloadURL(snapshot.ref).then((downloadURL) => {
+                  setImageUrl(downloadURL);
+                  console.log(imageUrl);
+                  handleMessageSend();
+                });
+              });
+            }
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => document.querySelector(".file-input").click()}
+        >
           <AttachFileIcon />
         </button>
         <button type="button" onClick={handleMessageSend}>

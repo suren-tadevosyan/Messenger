@@ -20,7 +20,7 @@
 }
 
 .selected-user-image {
-  height: 80%;
+  height: 70px;
   width: 60px;
 
   border-radius: 50%;
@@ -28,7 +28,7 @@
 
 .selected-user-image img {
   object-fit: cover;
-  height: 100%;
+
   width: 60px;
   border-radius: 50%;
 }
@@ -78,6 +78,7 @@
   display: flex;
   flex-direction: column;
   align-self: flex-end;
+  margin-bottom: 20px;
 }
 
 .sent-m span {
@@ -90,11 +91,12 @@
 .received-m {
   width: auto;
   align-self: flex-start;
+  margin-bottom: 20px;
 }
 
 .received-m span {
   align-self: flex-start;
-  margin-left: 10px;
+  margin-left: 15px;
   color: grey;
   font-size: 12px;
 }
@@ -142,4 +144,16 @@
 
 .messages-input button:hover {
   background-color: #ff7f52;
+}
+.file-input {
+  display: none;
+}
+
+.message-img {
+  max-width: 300px;
+  max-height: 150px;
+}
+
+.message-img img {
+  object-fit: contain;
 }
