@@ -132,7 +132,7 @@ const Chat = ({ selectedUser }) => {
                 <img
                   src={message.imageUrl}
                   className="message-img"
-                  alt="Image"
+                  alt="sendPhoto"
                 />{" "}
               </div>
             ) : (
