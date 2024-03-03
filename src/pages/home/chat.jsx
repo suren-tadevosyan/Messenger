@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import "./chat.css";
 import { useSelector } from "react-redux";
 import {
@@ -8,7 +9,13 @@ import {
   fetchMessages,
   deleteMessage,
 } from "../../services/messageServices";
-import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytes,
+  listAll,
+} from "firebase/storage";
 import userPhotoDef from "../../images/userMale.png";
 
 const Chat = ({ selectedUser }) => {
@@ -91,12 +98,27 @@ const Chat = ({ selectedUser }) => {
     const fetchAuthorImage = async () => {
       try {
         const storage = getStorage();
+        const fbStorageListRef = ref(
+          storage,
+          `user_photos/${selectedUser && selectedUser?.userId}`
+        );
         const storageRef = ref(
           storage,
           `user_photos/${selectedUser && selectedUser?.userId}/user-photo.jpg`
         );
-        const downloadURL = await getDownloadURL(storageRef);
-        setUserPhoto(downloadURL);
+        listAll(fbStorageListRef).then((list) => {
+          if (list.items.length > 0) {
+            getDownloadURL(storageRef)
+              .then((downloadURL) => {
+                setUserPhoto(downloadURL);
+
+            
+              })
+              .catch((error) => {
+                
+              });
+          }
+        });
       } catch (error) {
         setUserPhoto(userPhotoDef);
         // console.error("Error fetching author's image from Firebase storage:");
@@ -141,13 +163,19 @@ const Chat = ({ selectedUser }) => {
                   message.sender === id ? "sent" : "received"
                 }`}
               >
+                {" "}
                 <p>{message.content}</p>
+                {message.sender === id && (
+                  <button
+                    className="delete-message"
+                    onClick={() => handleDelete(message.id)}
+                  >
+                    <DeleteForeverIcon />
+                  </button>
+                )}
               </div>
             )}
             <span>{formatTime(message.timestamp)}</span>
-            {message.sender === id && (
-              <button onClick={() => handleDelete(message.id)}>Delete</button>
-            )}
           </div>
         ))}
         <div ref={messagesEndRef} />
@@ -188,7 +216,7 @@ const Chat = ({ selectedUser }) => {
           type="button"
           onClick={() => document.querySelector(".file-input").click()}
         >
-          <AttachFileIcon />
+          <AttachFileIcon style={{ transform: "rotate(45deg)" }} />
         </button>
         <button type="button" onClick={handleMessageSend}>
           <SendIcon style={{ transform: "rotate(-45deg)" }} />

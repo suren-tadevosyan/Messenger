@@ -6,9 +6,7 @@ import userPhoto from "../../images/userMale.png";
 import "./home.css";
 import { NotFound } from "../../utils/animations";
 import Chat from "./chat";
-import {
-  fetchLastMessage,
-} from "../../services/messageServices";
+import { fetchLastMessage } from "../../services/messageServices";
 
 const Home = () => {
   const [activeUsers, setActiveUsers] = useState([]);
@@ -25,7 +23,7 @@ const Home = () => {
         const users = await getAllUsers();
         setActiveUsers(users.filter((user) => user.userId !== id));
         users.forEach((user) => {
-          fetchLastMessage(id, user.userId, setLastMessages);
+          fetchLastMessage(id, user.userId, setLastMessages, false);
         });
       } catch (error) {
         console.error("Error fetching active users:", error);

@@ -68,7 +68,7 @@
   padding: 15px 20px;
   border-radius: 10px;
   margin: 5px 10px;
-  max-width: 300px;
+  max-width: 400px;
   word-wrap: break-word;
   color: white;
 }
@@ -104,10 +104,26 @@
 .sent {
   width: auto;
   align-self: flex-end;
+  display: flex;
+  justify-content: space-between;
   background-color: #ff4a09;
   border-bottom-right-radius: 0px !important;
 }
+.sent p {
+  word-wrap: break-word;
+  max-width: 300px;
+  margin-right: 10px;
+}
 
+.delete-message {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.delete-message:hover {
+  scale: 1.2;
+}
 .received {
   width: auto;
   align-self: flex-start;

@@ -24,6 +24,8 @@ const sendMessage = async (
       return;
     }
     const messagesRef = collection(firestore, "messages");
+    const messagesRef2 = collection(firestore, "messages2")
+
     const messageData = {
       sender: senderId,
       receiver: receiverId,
@@ -39,7 +41,8 @@ const sendMessage = async (
       messageData.imageUrl = imageUrl;
     }
 
-    await addDoc(messagesRef, messageData);
+    (await addDoc(messagesRef, messageData)) &&
+      addDoc(messagesRef2, messageData);
     console.log("Message sent successfully");
   } catch (error) {
     console.error("Error sending message:", error.message);
@@ -89,14 +92,25 @@ const fetchMessages = (selectedUserId, currentUserId, setMessages) => {
   };
 };
 
+const deleteMessage = async (messageId) => {
+  try {
+    const messageRef = doc(firestore, "messages", messageId);
+    const messagesRef2 = doc(firestore, "messages2", messageId);
+
+    (await deleteDoc(messageRef)) && deleteDoc(messagesRef2);
+  } catch (error) {
+    console.error("Error deleting message:", error);
+  }
+};
+
 const fetchLastMessage = async (
   currentUserId,
   otherUserId,
   setLastMessages,
-  mark
+  mark = false
 ) => {
   console.log();
-  const messagesRef = collection(firestore, "messages");
+  const messagesRef = collection(firestore, "messages2");
   const q = query(
     messagesRef,
     where("sender", "==", otherUserId),
@@ -116,6 +130,7 @@ const fetchLastMessage = async (
 
       if (mark) {
         markLastMessageAsSeen(doc.id);
+        console.log(222);
       }
     });
   });
@@ -125,22 +140,11 @@ const fetchLastMessage = async (
 
 const markLastMessageAsSeen = async (lastMessageId) => {
   try {
-    const messageRef = doc(firestore, "messages", lastMessageId);
+    const messageRef = doc(firestore, "messages2", lastMessageId);
     await updateDoc(messageRef, {
       seen: true,
     });
-  } catch (error) {
-    console.error("Error marking last message as seen:", error);
-  }
-};
-
-const deleteMessage = async (messageId) => {
-  try {
-    const messageRef = doc(firestore, "messages", messageId);
-    await deleteDoc(messageRef);
-  } catch (error) {
-    console.error("Error deleting message:", error);
-  }
+  } catch (error) {}
 };
 
 export { fetchMessages, sendMessage, fetchLastMessage, deleteMessage };

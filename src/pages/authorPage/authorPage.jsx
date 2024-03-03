@@ -1,7 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import "./authorPage.css";
 import userPhoto1 from "../../images/userMale.png";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  listAll,
+} from "firebase/storage";
 import { useEffect, useState } from "react";
 import { updatePhoto } from "../../redux/slices/auth";
 
@@ -47,8 +53,17 @@ const AuthorPage = () => {
       try {
         const storage = getStorage();
         const storageRef = ref(storage, `user_photos/${id}/user-photo.jpg`);
-        const downloadURL = await getDownloadURL(storageRef);
-        setUserPhoto(downloadURL);
+        const fbStorageListRef = ref(storage, `user_photos/${id}`);
+
+        listAll(fbStorageListRef).then((list) => {
+          if (list.items.length > 0) {
+            getDownloadURL(storageRef)
+              .then((downloadURL) => {
+                setUserPhoto(downloadURL);
+              })
+              .catch((error) => {});
+          }
+        });
       } catch (error) {
         console.error(
           "Error fetching author's image from Firebase storage:",
