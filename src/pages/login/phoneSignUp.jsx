@@ -4,7 +4,8 @@ import { Button } from "react-bootstrap";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { setUpRecaptha } from "../../services/userServices";
-import { Form, Alert } from "react-bootstrap";
+import { Form } from "react-bootstrap";
+import "./phone.css";
 
 const PhoneSignUp = () => {
   const [error, setError] = useState("");
@@ -37,6 +38,7 @@ const PhoneSignUp = () => {
     if (otp === "" || otp === null) return;
     try {
       await result.confirm(otp);
+      
       navigate("/home");
     } catch (err) {
       setError(err.message);
@@ -46,48 +48,59 @@ const PhoneSignUp = () => {
   return (
     <>
       <div className="login-register">
-        <h2 className="">Firebase Phone Auth</h2>
+        <div className="phoneAuth">
+          <h2 className="phoneH1">Firebase Phone Auth</h2>
 
-        <form onSubmit={getOtp} style={{ display: !flag ? "block" : "none" }}>
-          <div>
-            <PhoneInput
-              defaultCountry="AM"
-              value={number}
-              onChange={setNumber}
-              placeholder="Enter Phone Number"
-            />
-            {error && <div>{error}</div>}
-            <div id="recaptcha-container" />
-          </div>
-          <div className="button-right">
-            <Link to="/">
-              <Button variant="secondary">Cancel</Button>
-            </Link>
-            &nbsp;
-            <Button type="submit" variant="primary">
-              Send Otp
-            </Button>
-          </div>
-        </form>
+          <form
+            onSubmit={getOtp}
+            style={{ display: !flag ? "flex" : "none" }}
+            className="sendOtp"
+          >
+            <div className="numberInp">
+              <PhoneInput
+                defaultCountry="AM"
+                value={number}
+                onChange={setNumber}
+                placeholder="Enter Phone Number"
+              />
+              {error && <div style={{ color: "red" }}>{error}</div>}
+              <div id="recaptcha-container" />
+            </div>
+            <div>
+              <Link to="/">
+                <Button variant="secondary">Cancel</Button>
+              </Link>
+              &nbsp;
+              <Button type="submit" variant="primary">
+                Send Otp
+              </Button>
+            </div>
+          </form>
 
-        <Form onSubmit={verifyOtp} style={{ display: flag ? "block" : "none" }}>
-          <Form.Group className="mb-3" controlId="formBasicOtp">
-            <Form.Control
-              type="otp"
-              placeholder="Enter OTP"
-              onChange={(e) => setOtp(e.target.value)}
-            />
-          </Form.Group>
-          <div className="button-right">
-            <Link to="/">
-              <Button variant="secondary">Cancel</Button>
-            </Link>
-            &nbsp;
-            <Button type="submit" variant="primary">
-              Verify
-            </Button>
-          </div>
-        </Form>
+          <Form
+            onSubmit={verifyOtp}
+            style={{ display: flag ? "flex" : "none" }}
+            className="sendOtp"
+
+          >
+            <Form.Group className="verify" controlId="formBasicOtp">
+              <Form.Control
+                type="otp"
+                placeholder="Enter OTP"
+                onChange={(e) => setOtp(e.target.value)}
+              />
+            </Form.Group>
+            <div className="button-right">
+              <Link to="/">
+                <Button variant="secondary">Cancel</Button>
+              </Link>
+              &nbsp;
+              <Button type="submit" variant="primary">
+                Verify
+              </Button>
+            </div>
+          </Form>
+        </div>
       </div>
     </>
   );

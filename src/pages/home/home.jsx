@@ -83,11 +83,11 @@ const Home = () => {
       }
     };
 
-    handleResize(); // Call the function to set initial state
+    handleResize();
 
     window.addEventListener("resize", handleResize);
 
-    // Cleanup the event listener on component unmount
+    
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 

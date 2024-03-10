@@ -63,8 +63,14 @@ export function setUpRecaptha(number) {
   recaptchaVerifier.render();
   return new Promise((resolve, reject) => {
     signInWithPhoneNumber(auth, number, recaptchaVerifier)
-      .then((confirmationResult) => {
-        console.log(confirmationResult);
+      .then(async (confirmationResult) => {
+        const userData = {
+          name: number,
+          phone: number,
+        };
+        addNewUserToFirestorePhone(userData, true, true, true, true);
+
+        console.log(confirmationResult.user);
         resolve(confirmationResult);
       })
       .catch((error) => {
@@ -73,3 +79,41 @@ export function setUpRecaptha(number) {
       });
   });
 }
+
+export const addNewUserToFirestorePhone = async (
+  formData,
+  dispatch,
+  setErrorMessage,
+  setErrorModalVisible
+) => {
+  try {
+    console.log(formData);
+
+    const userRef = collection(firestore, "users");
+    const querySnapshot = await getDocs(
+      query(userRef, where("phone", "==", formData.phone))
+    );
+
+    if (!querySnapshot.empty) {
+    } else {
+      const userData = {
+        name: formData.name,
+        phone: formData.phone,
+
+        isActive: true,
+      };
+
+      await addDoc(userRef, userData);
+      console.log("New user created successfully");
+    }
+  } catch (error) {
+    if (error.code === "auth/email-already-in-use") {
+      const message = "User with this email already exists";
+      setErrorMessage(message);
+      setErrorModalVisible(true);
+      console.log("User with this email already exists");
+    } else {
+      console.error("Error creating user:", error.message);
+    }
+  }
+};

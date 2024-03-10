@@ -113,12 +113,12 @@ const Login = () => {
               Login with Google
               <img src={googleImage} alt="Google" />
             </button>
-            <Link to="/loginWithPhone">
+            {/* <Link to="/loginWithPhone">
               <button className="phone">
                 Login with Phone
                 <img src={phoneImage} alt="Google" />
               </button>
-            </Link>
+            </Link> */}
           </div>
 
           <div className="form-group"></div>
