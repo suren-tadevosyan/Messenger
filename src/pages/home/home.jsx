@@ -16,6 +16,8 @@ const Home = () => {
   const [userImages, setUserImages] = useState({});
   const [searchText, setSearchText] = useState("");
   const [lastMessages, setLastMessages] = useState({});
+  const [activeUsersVisible, setActiveUsersVisible] = useState(true);
+  const [screenSize, setScreenSize] = useState(false);
 
   useEffect(() => {
     const fetchActiveUsers = async () => {
@@ -59,15 +61,43 @@ const Home = () => {
     setSelectedUserId(user.userId === selectedUserId ? null : user.userId);
 
     fetchLastMessage(id, user.userId, setLastMessages, true);
+    if (screenSize) {
+      toggleActiveUsersVisibility();
+    }
   };
 
   const filteredUsers = activeUsers.filter((user) =>
     user.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const toggleActiveUsersVisibility = () => {
+    setActiveUsersVisible(!activeUsersVisible);
+    console.log(activeUsersVisible);
+  };
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 850) {
+        setScreenSize(true);
+      } else {
+        setScreenSize(false);
+      }
+    };
+
+    handleResize(); // Call the function to set initial state
+
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup the event listener on component unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div className="message-container">
-      <div className="active-users-container">
+      <div
+        className={`active-users-container ${
+          activeUsersVisible ? "" : "hidden"
+        }`}
+      >
         <div className="search">
           <p>Chat</p>
           <input
@@ -135,8 +165,15 @@ const Home = () => {
           )}
         </div>
       </div>
-      <div className="chat-container-all">
-        <Chat selectedUser={selectedUser} />
+      <div
+        className={`chat-container-all ${
+          activeUsersVisible && screenSize ? "hidden" : ""
+        }`}
+      >
+        <Chat
+          selectedUser={selectedUser}
+          toggleActiveUsersVisibility={toggleActiveUsersVisibility}
+        />
       </div>
     </div>
   );

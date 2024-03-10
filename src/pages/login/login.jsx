@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 
-import { useDispatch,  } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginUser, setUser } from "../../redux/slices/auth";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import userMale from "../../images/userMale.png";
 import "./login.css";
 
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import googleImage from "../../images/google.png";
+import phoneImage from "../../images/phone.png";
 import { addNewUserToFirestore } from "../../services/userServices";
+import { Link } from "react-router-dom";
 // import {
 //   addNewUserToFirestore,
 //   signOutAndUpdateStatus,
@@ -20,10 +18,8 @@ import { addNewUserToFirestore } from "../../services/userServices";
 
 const Login = () => {
   const dispatch = useDispatch();
-  
-  const [error, setError] = useState(null);
 
-  
+  const [error, setError] = useState(null);
 
   const handleGoogleSignIn = async () => {
     const auth = getAuth();
@@ -37,7 +33,7 @@ const Login = () => {
             googleId: user.uid,
           };
 
-            addNewUserToFirestore(userData, dispatch, true, true, true);
+          addNewUserToFirestore(userData, dispatch, true, true, true);
 
           //   await signOutAndUpdateStatus(user.uid, true);
 
@@ -106,22 +102,25 @@ const Login = () => {
     e.preventDefault();
   };
 
-
   return (
     <div className="login-register">
-
-
       <div className={"login-container"}>
-        <h2>Login with Google</h2>
+        <h2>Sign in</h2>
         <form className="login-form" action="#" onSubmit={submitHandler}>
           {error && <p className="error-message">{error}</p>}
           <div className="form-group googleLogin">
-         
-            <button onClick={handleGoogleSignIn}>
+            <button className="google" onClick={handleGoogleSignIn}>
+              Login with Google
               <img src={googleImage} alt="Google" />
             </button>
+            <Link to="/loginWithPhone">
+              <button className="phone">
+                Login with Phone
+                <img src={phoneImage} alt="Google" />
+              </button>
+            </Link>
           </div>
-         
+
           <div className="form-group"></div>
         </form>
       </div>

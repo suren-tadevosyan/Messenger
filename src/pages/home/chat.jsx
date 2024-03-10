@@ -4,6 +4,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import "./chat.css";
 import { useSelector } from "react-redux";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
   sendMessage,
   fetchMessages,
@@ -18,7 +19,7 @@ import {
 } from "firebase/storage";
 import userPhotoDef from "../../images/userMale.png";
 
-const Chat = ({ selectedUser }) => {
+const Chat = ({ selectedUser, toggleActiveUsersVisibility }) => {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [sortedMessages, setSortedMessages] = useState([]);
@@ -111,12 +112,8 @@ const Chat = ({ selectedUser }) => {
             getDownloadURL(storageRef)
               .then((downloadURL) => {
                 setUserPhoto(downloadURL);
-
-            
               })
-              .catch((error) => {
-                
-              });
+              .catch((error) => {});
           }
         });
       } catch (error) {
@@ -133,6 +130,9 @@ const Chat = ({ selectedUser }) => {
       <div className="selected-user">
         {selectedUser && (
           <div className="">
+            <div className="backToAll" onClick={toggleActiveUsersVisibility}>
+              <ArrowBackIcon />
+            </div>
             <div className="selected-user-image">
               <img src={userPhoto} alt="" />
             </div>

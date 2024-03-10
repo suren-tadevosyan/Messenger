@@ -6,6 +6,11 @@
   width: 100%;
 }
 
+@media screen and (max-width: 850px) {
+  .chat-container {
+    height: 85vh;
+  }
+}
 .selected-user {
   display: flex;
   padding: 0 20px;
@@ -172,4 +177,25 @@
 
 .message-img img {
   object-fit: contain;
+}
+
+.backToAll {
+  visibility: hidden;
+  position: absolute;
+}
+
+.backToAll:hover {
+  background-color: #ff4a09;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 850px) {
+  .backToAll {
+    visibility: visible;
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    position: relative;
+  }
+ 
 }
