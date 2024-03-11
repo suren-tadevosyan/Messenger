@@ -27,13 +27,13 @@ body {
     display: flex;
     flex-direction: column;
     padding: 0;
-    width: 96%;
+    width: 100%;
   }
 
   .innerContainer {
     width: 100%;
     margin-top: 10px;
-    height: 85vh;
+    height: 100vh;
     margin-left: 0;
   }
 }

@@ -157,8 +157,8 @@
   .active-users-container {
     flex-direction: column;
     align-content: center;
-    height: 95vh;
-    width: 99%;
+    height: calc(100vh - 85px);
+    width: 100%;
   }
 
   .chat-container-all {
