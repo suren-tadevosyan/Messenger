@@ -86,7 +86,9 @@
   justify-content: space-between;
   cursor: pointer;
 }
-
+.user:hover {
+  background-color: #e0e0e0 !important;
+}
 .active-user {
   display: flex;
   align-items: center;
@@ -125,10 +127,6 @@
 
 .time {
   padding: 30px 20px;
-}
-
-.active-user:hover {
-  background-color: #e0e0e0;
 }
 
 .user:hover {

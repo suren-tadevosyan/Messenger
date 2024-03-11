@@ -114,6 +114,7 @@ const Login = () => {
               Login with Google
               <img src={googleImage} alt="Google" />
             </button>
+
             {/* <Link to="/loginWithPhone">
               <button className="phone">
                 Login with Phone

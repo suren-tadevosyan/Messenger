@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { getAllUsers } from "../../services/userServices";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, getDownloadURL, listAll } from "firebase/storage";
 import userPhoto from "../../images/userMale.png";
 import "./home.css";
 import { NotFound } from "../../utils/animations";
 import Chat from "./chat";
 import { fetchLastMessage } from "../../services/messageServices";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
 
 const Home = () => {
   const [activeUsers, setActiveUsers] = useState([]);
@@ -40,13 +41,20 @@ const Home = () => {
     async (userId) => {
       try {
         const storage = getStorage();
+        const fbStorageListRef = ref(storage, `user_photos/${userId}`);
         const storageRef = ref(storage, `user_photos/${userId}/user-photo.jpg`);
-
-        const downloadURL = await getDownloadURL(storageRef);
-        setUserImages((prevUserImages) => ({
-          ...prevUserImages,
-          [userId]: downloadURL,
-        }));
+        listAll(fbStorageListRef).then((list) => {
+          if (list.items.length > 0) {
+            getDownloadURL(storageRef)
+              .then((downloadURL) => {
+                setUserImages((prevUserImages) => ({
+                  ...prevUserImages,
+                  [userId]: downloadURL,
+                }));
+              })
+              .catch((error) => {});
+          }
+        });
       } catch (error) {}
     },
     [setUserImages]
@@ -87,7 +95,6 @@ const Home = () => {
 
     window.addEventListener("resize", handleResize);
 
-    
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
@@ -129,9 +136,7 @@ const Home = () => {
                 key={user.userId}
               >
                 <li
-                  className={`active-user ${
-                    selectedUserId === user.userId ? "active" : ""
-                  }`}
+                  className={`active-user `}
                 >
                   <div className="user-image">
                     <img
@@ -155,10 +160,12 @@ const Home = () => {
                 </li>
                 <div className="time">
                   {" "}
-                  Seen:{" "}
-                  {lastMessages[user.userId] && lastMessages[user.userId].seen
-                    ? "true"
-                    : ""}
+                  {lastMessages[user.userId] &&
+                  lastMessages[user.userId].seen ? (
+                    <DoneAllIcon style={{ color: "black" }} />
+                  ) : (
+                    <DoneAllIcon style={{ color: "grey" }} />
+                  )}
                 </div>
               </div>
             ))

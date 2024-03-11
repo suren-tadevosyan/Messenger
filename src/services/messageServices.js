@@ -10,7 +10,14 @@ import {
   updateDoc,
   doc,
   deleteDoc,
+  getDocs,
 } from "firebase/firestore";
+
+import { v4 as uuidv4 } from "uuid";
+
+const generateId = () => {
+  return uuidv4();
+};
 
 const sendMessage = async (
   receiverId,
@@ -24,13 +31,15 @@ const sendMessage = async (
       return;
     }
     const messagesRef = collection(firestore, "messages");
-    const messagesRef2 = collection(firestore, "messages2")
+    const messagesRef2 = collection(firestore, "messages2");
+    const messageId = generateId();
 
     const messageData = {
       sender: senderId,
       receiver: receiverId,
       timestamp: new Date().toISOString(),
       seen: false,
+      uid: messageId,
     };
 
     if (newMessage) {
@@ -92,12 +101,18 @@ const fetchMessages = (selectedUserId, currentUserId, setMessages) => {
   };
 };
 
-const deleteMessage = async (messageId) => {
+const deleteMessage = async (messageId, messageUid) => {
   try {
     const messageRef = doc(firestore, "messages", messageId);
-    const messagesRef2 = doc(firestore, "messages2", messageId);
 
-    (await deleteDoc(messageRef)) && deleteDoc(messagesRef2);
+    await deleteDoc(messageRef);
+    const querySnapshot2 = await getDocs(collection(firestore, "messages2"));
+    querySnapshot2.forEach((doc) => {
+      const data = doc.data();
+      if (data.uid === messageUid) {
+        deleteDoc(doc.ref);
+      }
+    });
   } catch (error) {
     console.error("Error deleting message:", error);
   }
@@ -122,7 +137,7 @@ const fetchLastMessage = async (
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     querySnapshot.forEach((doc) => {
       const lastMessage = doc.data();
-
+  
       setLastMessages((prevLastMessages) => ({
         ...prevLastMessages,
         [otherUserId]: lastMessage,
@@ -130,7 +145,7 @@ const fetchLastMessage = async (
 
       if (mark) {
         markLastMessageAsSeen(doc.id);
-        console.log(222);
+        unsubscribe();
       }
     });
   });

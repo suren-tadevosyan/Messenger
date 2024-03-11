@@ -43,8 +43,8 @@ const Chat = ({ selectedUser, toggleActiveUsersVisibility }) => {
     }
   };
 
-  const handleDelete = (messageID) => {
-    deleteMessage(messageID);
+  const handleDelete = (messageID, messageUID) => {
+    deleteMessage(messageID, messageUID);
     const unsubscribe = fetchMessages(selectedUser?.userId, id, setMessages);
 
     return () => unsubscribe();
@@ -113,11 +113,14 @@ const Chat = ({ selectedUser, toggleActiveUsersVisibility }) => {
               .then((downloadURL) => {
                 setUserPhoto(downloadURL);
               })
-              .catch((error) => {});
+              .catch((error) => {
+                setUserPhoto(userPhotoDef);
+              });
+          } else {
+            setUserPhoto(userPhotoDef);
           }
         });
       } catch (error) {
-        setUserPhoto(userPhotoDef);
         // console.error("Error fetching author's image from Firebase storage:");
       }
     };
@@ -168,7 +171,7 @@ const Chat = ({ selectedUser, toggleActiveUsersVisibility }) => {
                 {message.sender === id && (
                   <button
                     className="delete-message"
-                    onClick={() => handleDelete(message.id)}
+                    onClick={() => handleDelete(message.id, message.uid)}
                   >
                     <DeleteForeverIcon />
                   </button>
