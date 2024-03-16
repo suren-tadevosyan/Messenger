@@ -8,9 +8,9 @@ import "./login.css";
 
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import googleImage from "../../images/google.png";
-// import phoneImage from "../../images/phone.png";
+import phoneImage from "../../images/phone2.png";
 import { addNewUserToFirestore } from "../../services/userServices";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // import {
 //   addNewUserToFirestore,
@@ -115,12 +115,10 @@ const Login = () => {
               <img src={googleImage} alt="Google" />
             </button>
 
-            {/* <Link to="/loginWithPhone">
-              <button className="phone">
-                Login with Phone
-                <img src={phoneImage} alt="Google" />
-              </button>
-            </Link> */}
+            <Link to="/loginWithPhone" className="phone">
+              Login with Phone
+              <img src={phoneImage} alt="Google" />
+            </Link>
           </div>
 
           <div className="form-group"></div>

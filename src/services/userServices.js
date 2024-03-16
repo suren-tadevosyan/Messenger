@@ -2,6 +2,10 @@ import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import firestore from "../fireStore";
 import { auth } from "../firebase.js";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+
+
+
+
 export const addNewUserToFirestore = async (
   formData,
   dispatch,
@@ -53,7 +57,8 @@ export const getAllUsers = async () => {
 
   return allUsers;
 };
-export function setUpRecaptha(number) {
+
+export function setUpRecaptha(number, dispatch) {
   console.log(auth);
   const recaptchaVerifier = new RecaptchaVerifier(
     auth,
@@ -64,13 +69,6 @@ export function setUpRecaptha(number) {
   return new Promise((resolve, reject) => {
     signInWithPhoneNumber(auth, number, recaptchaVerifier)
       .then(async (confirmationResult) => {
-        const userData = {
-          name: number,
-          phone: number,
-        };
-        addNewUserToFirestorePhone(userData, true, true, true, true);
-
-        console.log(confirmationResult.user);
         resolve(confirmationResult);
       })
       .catch((error) => {
@@ -80,12 +78,7 @@ export function setUpRecaptha(number) {
   });
 }
 
-export const addNewUserToFirestorePhone = async (
-  formData,
-  dispatch,
-  setErrorMessage,
-  setErrorModalVisible
-) => {
+export const addNewUserToFirestorePhone = async (formData, dispatch) => {
   try {
     console.log(formData);
 
@@ -94,12 +87,13 @@ export const addNewUserToFirestorePhone = async (
       query(userRef, where("phone", "==", formData.phone))
     );
 
+
     if (!querySnapshot.empty) {
     } else {
       const userData = {
         name: formData.name,
         phone: formData.phone,
-
+        userId: formData.id,
         isActive: true,
       };
 
@@ -108,9 +102,6 @@ export const addNewUserToFirestorePhone = async (
     }
   } catch (error) {
     if (error.code === "auth/email-already-in-use") {
-      const message = "User with this email already exists";
-      setErrorMessage(message);
-      setErrorModalVisible(true);
       console.log("User with this email already exists");
     } else {
       console.error("Error creating user:", error.message);
