@@ -46,15 +46,14 @@ const PhoneSignUp = () => {
       const userCredential = await result.confirm(otp);
       const user = userCredential.user;
 
-
       const userData = {
         name: number,
         phone: user.phoneNumber,
         id: user.uid,
       };
       await addNewUserToFirestorePhone(userData, dispatch);
-      dispatch(setUser(userData));
-      dispatch(loginUser({ username: "username", password: "password" }));
+      await dispatch(setUser(userData));
+      await dispatch(loginUser({ username: "username", password: "password" }));
 
       window.localStorage.setItem("userId", 1);
 
