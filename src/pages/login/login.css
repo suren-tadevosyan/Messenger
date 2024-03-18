@@ -25,6 +25,14 @@ body {
   background-position: center center;
   background-image: url(../../images//back.jpg);
 }
+.login-register video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover; /* Ensures video fills entire viewport */
+}
 
 .login-container {
   width: 30%;
@@ -36,9 +44,9 @@ body {
   justify-content: center;
   background: linear-gradient(
     135deg,
-    rgba(15, 12, 41, 0.9),
-    rgba(48, 43, 99, 0.9),
-    rgba(36, 36, 62, 0.9)
+    rgba(15, 12, 41, 1),
+    rgba(48, 43, 99, 1),
+    rgba(36, 36, 62, 1)
   );
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 20px;

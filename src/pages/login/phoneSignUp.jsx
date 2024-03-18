@@ -55,7 +55,7 @@ const PhoneSignUp = () => {
       await dispatch(setUser(userData));
       await dispatch(loginUser({ username: "username", password: "password" }));
 
-      window.localStorage.setItem("userId", 1);
+      await window.localStorage.setItem("userId", 1);
 
       navigate("/home");
     } catch (err) {

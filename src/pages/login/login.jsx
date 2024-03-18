@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { useDispatch } from "react-redux";
 import { loginUser, setUser } from "../../redux/slices/auth";
@@ -11,6 +11,7 @@ import googleImage from "../../images/google.png";
 import phoneImage from "../../images/phone2.png";
 import { addNewUserToFirestore } from "../../services/userServices";
 import { Link } from "react-router-dom";
+import backVideo from "../../images/back.mp4";
 
 // import {
 //   addNewUserToFirestore,
@@ -19,6 +20,7 @@ import { Link } from "react-router-dom";
 
 const Login = () => {
   const dispatch = useDispatch();
+  const videoRef = useRef(null);
 
   const [error, setError] = useState(null);
 
@@ -105,6 +107,8 @@ const Login = () => {
 
   return (
     <div className="login-register">
+      <video ref={videoRef} src={backVideo} autoPlay loop muted />
+
       <div className={"login-container"}>
         <h2>Sign in</h2>
         <form className="login-form" action="#" onSubmit={submitHandler}>
