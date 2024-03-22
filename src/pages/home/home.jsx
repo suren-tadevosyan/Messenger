@@ -80,7 +80,7 @@ const Home = () => {
 
   const toggleActiveUsersVisibility = () => {
     setActiveUsersVisible(!activeUsersVisible);
-    console.log(activeUsersVisible);
+
   };
   useEffect(() => {
     const handleResize = () => {

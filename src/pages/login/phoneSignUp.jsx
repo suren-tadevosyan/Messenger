@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import PhoneInput from "react-phone-number-input";
@@ -11,7 +11,8 @@ import { Form } from "react-bootstrap";
 import "./phone.css";
 
 import { useDispatch } from "react-redux";
-import { loginUser, setUser } from "../../redux/slices/auth";
+import { setUser } from "../../redux/slices/auth";
+import backVideo from "../../images/back.mp4";
 
 const PhoneSignUp = () => {
   const [error, setError] = useState("");
@@ -21,10 +22,11 @@ const PhoneSignUp = () => {
   const [result, setResult] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const videoRef = useRef(null);
 
   const getOtp = async (e) => {
     e.preventDefault();
-    console.log(number);
+
 
     setError("");
     if (number === "" || number === undefined)
@@ -53,7 +55,7 @@ const PhoneSignUp = () => {
       };
       await addNewUserToFirestorePhone(userData, dispatch);
       await dispatch(setUser(userData));
-      await dispatch(loginUser({ username: "username", password: "password" }));
+      dispatch({ type: "loginUser" });
 
       await window.localStorage.setItem("userId", 1);
 
@@ -66,6 +68,8 @@ const PhoneSignUp = () => {
   return (
     <>
       <div className="login-register">
+        <video ref={videoRef} src={backVideo} autoPlay loop muted />
+
         <div className="phoneAuth">
           <h2 className="phoneH1">Firebase Phone Auth</h2>
 

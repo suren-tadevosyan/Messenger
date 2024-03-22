@@ -52,10 +52,7 @@ const Header = () => {
         const downloadURL = await getDownloadURL(storageRef);
         setUserPhoto(downloadURL);
       } catch (error) {
-        console.error(
-          "Error fetching author's image from Firebase storage:",
-          error
-        );
+        console.error();
         setUserPhoto(userPhoto);
       }
     };

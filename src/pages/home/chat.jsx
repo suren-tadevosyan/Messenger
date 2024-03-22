@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -27,12 +27,13 @@ const Chat = ({ selectedUser, toggleActiveUsersVisibility }) => {
   const [userPhoto, setUserPhoto] = useState(null);
   const messagesEndRef = useRef(null);
   const [imageUrl, setImageUrl] = useState(null);
+  const [prevImageUrl, setPrevImageUrl] = useState(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [sortedMessages]);
 
-  const handleMessageSend = () => {
+  const handleMessageSend = useCallback(() => {
     if ((newMessage.trim() !== "" || imageUrl) && selectedUser) {
       sendMessage(selectedUser.userId, id, newMessage, imageUrl);
       setNewMessage("");
@@ -41,7 +42,15 @@ const Chat = ({ selectedUser, toggleActiveUsersVisibility }) => {
 
       return () => unsubscribe();
     }
-  };
+  }, [imageUrl, newMessage, selectedUser, setMessages, id]);
+
+  useEffect(() => {
+    if (imageUrl !== prevImageUrl) {
+      handleMessageSend();
+    }
+
+    setPrevImageUrl(imageUrl);
+  }, [imageUrl, handleMessageSend, prevImageUrl]);
 
   const handleDelete = (messageID, messageUID) => {
     deleteMessage(messageID, messageUID);
@@ -154,11 +163,15 @@ const Chat = ({ selectedUser, toggleActiveUsersVisibility }) => {
           >
             {message.imageUrl ? (
               <div className="message-img">
-                <img
-                  src={message.imageUrl}
-                  className="message-img"
-                  alt="sendPhoto"
-                />{" "}
+                <img src={message.imageUrl} alt="sendPhoto" />{" "}
+                {message.sender === id && (
+                  <button
+                    className="delete-image"
+                    onClick={() => handleDelete(message.id, message.uid)}
+                  >
+                    <DeleteForeverIcon />
+                  </button>
+                )}
               </div>
             ) : (
               <div
@@ -208,7 +221,7 @@ const Chat = ({ selectedUser, toggleActiveUsersVisibility }) => {
               uploadBytes(storageRef, file).then((snapshot) => {
                 getDownloadURL(snapshot.ref).then((downloadURL) => {
                   setImageUrl(downloadURL);
-                  console.log(imageUrl);
+
                   handleMessageSend();
                 });
               });

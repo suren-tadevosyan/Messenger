@@ -52,7 +52,6 @@ const sendMessage = async (
 
     (await addDoc(messagesRef, messageData)) &&
       addDoc(messagesRef2, messageData);
-    console.log("Message sent successfully");
   } catch (error) {
     console.error("Error sending message:", error.message);
   }
@@ -137,7 +136,7 @@ const fetchLastMessage = async (
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     querySnapshot.forEach((doc) => {
       const lastMessage = doc.data();
-  
+
       setLastMessages((prevLastMessages) => ({
         ...prevLastMessages,
         [otherUserId]: lastMessage,

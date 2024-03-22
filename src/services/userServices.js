@@ -59,7 +59,7 @@ export const getAllUsers = async () => {
 };
 
 export function setUpRecaptha(number, dispatch) {
-  console.log(auth);
+
   const recaptchaVerifier = new RecaptchaVerifier(
     auth,
     "recaptcha-container",
@@ -80,7 +80,7 @@ export function setUpRecaptha(number, dispatch) {
 
 export const addNewUserToFirestorePhone = async (formData, dispatch) => {
   try {
-    console.log(formData);
+
 
     const userRef = collection(firestore, "users");
     const querySnapshot = await getDocs(
